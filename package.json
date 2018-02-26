@@ -35,6 +35,8 @@
     "sinon": "^1.17.6"
   },
   "dependencies": {
-    "component-class": "/Users/apowers/Projects/components/component-class"
+    "component-class": "/Users/apowers/Projects/components/component-class",
+    "fido2-lib": "/Users/apowers/Projects/fido2-stack/fido2-lib",
+    "fido2-helpers": "/Users/apowers/Projects/fido2-stack/fido2-helpers"
   }
 }
