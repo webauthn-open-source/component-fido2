@@ -1,9 +1,9 @@
 var turnOnDebugLogging = true;
 
-var Fido2Component = require("../index.js");
-var assert = require("chai").assert;
+const Fido2Component = require("../index.js");
+const assert = require("chai").assert;
 const sinon = require("sinon");
-const helpers = require("fido2-helpers");
+const h = require("fido2-helpers");
 
 
 var dummyComponentManager = {
@@ -12,6 +12,7 @@ var dummyComponentManager = {
     register: function() {},
     get: function(name) {
         if (name === "logger") return dummyLogger;
+        if (name === "uds") return dummyUds;
     },
     clear: function() {},
     config: function() {},
@@ -28,10 +29,37 @@ var dummyLogger = {
                 return function(...msg) {
                     if (turnOnDebugLogging) console.log(...msg);
                 };
-            },
+            }
         });
     }
 };
+
+var dummyUds = {
+    createUser() {
+        return new DummyTableClass();
+    },
+    findUsers() {},
+    saveUser() {},
+    destroyUser() {},
+    findCredentials() {},
+    createCredential() {},
+    saveCredential() {},
+    destroyCredential() {}
+};
+
+class DummyTableClass {
+    set(prop) {
+        this[prop] = prop;
+    }
+
+    get(prop) {
+        return this[prop];
+    }
+
+    commit() {
+        console.log("DOING COMMIT");
+    }
+}
 
 describe("Fido2Component", function() {
     var f2c;
@@ -71,12 +99,26 @@ describe("Fido2Component", function() {
     });
 
     describe("registerRequest", function() {
+        it("errors on missing body");
+        it("errors on missing username");
+        it("user not found");
+        it("user found");
+        it("commits user");
+        it("commits credential");
+
         it.skip("resolves to a challenge", function(done) {
-            var args = [
-                null, {
-                    send: sendCb
-                }
-            ];
+            var args = [{
+                body: h.functions.cloneObject(h.server.challengeRequestMsg)
+            }, {
+                send: sendCb
+            }];
+            var findUsersStub = sinon.stub(dummyUds, "findUsers");
+            findUsersStub.onCall(0).returns(Promise.resolve([]));
+            var createCredStub = sinon.stub(dummyUds, "createCredential");
+            var newCred = new DummyTableClass();
+            createCredStub.onCall(0).returns(newCred);
+            var newCredCommitStub = sinon.stub(newCred, "commit");
+            newCredCommitStub.onCall(0).returns(Promise.resolve());
 
             function sendCb(msg) {
                 assert.isString(msg);
@@ -87,6 +129,11 @@ describe("Fido2Component", function() {
                 assert.isObject(msg.rp);
                 assert.strictEqual(msg.rp.id, "example.com");
                 assert.strictEqual(msg.rp.name, "example.com");
+
+                assert(newCredCommitStub.calledOnce, "should commit new credential");
+
+                createCredStub.restore();
+                findUsersStub.restore();
                 done();
             }
 
@@ -97,27 +144,36 @@ describe("Fido2Component", function() {
     });
 
     describe("registerResponse", function() {
-        it("accepts a response", function(done) {
-            var body = helpers.copyObject(helpers.registerResponseMsg);
-            var args = [{
-                body: body
-            }, {
-                send: sendCb
-            }];
+        it.skip("accepts a response", function(done) {
+            var args = [
+                h.functions.cloneObject(h.server.challengeResponseAttestationNoneMsg), {
+                    send: sendCb
+                }, {
+                    status: () => args[0]
+                }
+            ];
 
-            function sendCb() {
-                console.log ("sendCb");
+            function sendCb(msg) {
+                console.log("sendCb");
+                console.log("msg", msg);
                 done();
             }
 
+            f2c.setServerDomain("example.com");
             f2c.init();
             f2c.registerResponse(...args);
         });
+        it("errors when user not found");
+        it("errors when multiple users found");
+        it("errors when no pending credentials");
+        it("errors when multiple pending crednetials");
+        it("deletes credential after timeout");
         it("errors when response is missing fields");
     });
 
     describe("loginRequest", function() {
-
+        it("errors when user not found");
+        it("errors when credential not found");
     });
 
     describe("loginResponse", function() {
