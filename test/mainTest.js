@@ -17,7 +17,11 @@ var dummyComponentManager = {
         if (name === "uds") return dummyUds;
     },
     clear: function() {},
-    config: function() {},
+    config: function(module, cmd) {
+        if (module === "https" && cmd === "get-protocol") return "https";
+        if (module === "https" && cmd === "get-domain") return "localhost";
+        if (module === "https" && cmd === "get-port") return "443";
+    },
     init: function() {},
     shutdown: function() {},
     componentList: new Map(),
@@ -76,6 +80,11 @@ describe("Fido2Component", function() {
     it("can be initialized", function() {
         var ret = f2c.init();
         assert.isUndefined(ret);
+    });
+
+    it("sets right origin", function() {
+        f2c.init();
+        assert.strictEqual(f2c.origin, "https://localhost");
     });
 
     describe("feature", function() {
