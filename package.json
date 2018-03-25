@@ -1,6 +1,6 @@
 {
   "name": "component-fido2",
-  "version": "1.0.0-alpha2",
+  "version": "1.0.0-alpha3",
   "description": "The core component of a FIDO2 server",
   "main": "index.js",
   "scripts": {
