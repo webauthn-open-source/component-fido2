@@ -1,3 +1,5 @@
+"use strict";
+
 var turnOnDebugLogging = true;
 
 const Fido2Component = require("../index.js");
@@ -65,7 +67,6 @@ describe("Fido2Component", function() {
     var f2c;
     beforeEach(function() {
         f2c = new Fido2Component(dummyComponentManager);
-        f2c.setServerDomain("localhost");
     });
 
     afterEach(function() {
@@ -78,24 +79,10 @@ describe("Fido2Component", function() {
     });
 
     describe("feature", function() {
-        it("setServerName", function() {
-            f2c.setServerDomain("example.com");
-            assert.strictEqual(f2c.serverDomain, "example.com");
-        });
-        it("getServerName", function() {
-            f2c.setServerDomain("example.com");
-            var ret = f2c.getServerDomain();
-            assert.strictEqual(ret, "example.com");
-        });
-        it("setServerName", function() {
-            f2c.setServerName("Facebook");
-            assert.strictEqual(f2c.serverName, "Facebook");
-        });
-        it("getServerName", function() {
-            f2c.setServerName("Google");
-            var ret = f2c.getServerName();
-            assert.strictEqual(ret, "Google");
-        });
+        it("setRegisterRequest");
+        it("setRegisterResponse");
+        it("setLoginRequest");
+        it("setLoginResponse");
     });
 
     describe("registerRequest", function() {
@@ -123,7 +110,6 @@ describe("Fido2Component", function() {
             function sendCb(msg) {
                 assert.isString(msg);
                 msg = JSON.parse(msg);
-                console.log("msg", msg);
                 assert.isString(msg.challenge);
                 assert.strictEqual(msg.timeout, 60000);
                 assert.isObject(msg.rp);
@@ -137,7 +123,6 @@ describe("Fido2Component", function() {
                 done();
             }
 
-            f2c.setServerDomain("example.com");
             f2c.init();
             f2c.registerRequest(...args);
         });
@@ -154,12 +139,9 @@ describe("Fido2Component", function() {
             ];
 
             function sendCb(msg) {
-                console.log("sendCb");
-                console.log("msg", msg);
                 done();
             }
 
-            f2c.setServerDomain("example.com");
             f2c.init();
             f2c.registerResponse(...args);
         });
