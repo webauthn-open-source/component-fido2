@@ -1,6 +1,6 @@
 {
   "name": "component-fido2",
-  "version": "1.0.0-alpha3",
+  "version": "1.0.0",
   "description": "The core component of a FIDO2 server",
   "main": "index.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "sinon": "^1.17.6"
   },
   "dependencies": {
-    "component-class": "1.0.0-alpha1",
-    "fido2-lib": "1.0.0-alpha1"
+    "component-class": "^1.0.0",
+    "fido2-lib": "^1.0.0"
   }
 }
