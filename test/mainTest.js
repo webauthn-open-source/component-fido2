@@ -106,6 +106,7 @@ describe("Fido2Component", function() {
                     var msg = res._getData();
                     assert.isString(msg);
                     msg = JSON.parse(msg);
+
                     // check message
                     assert.strictEqual(msg.status, "ok");
                     assert.strictEqual(msg.errorMessage, "");
@@ -126,9 +127,11 @@ describe("Fido2Component", function() {
                         alg: -7,
                         type: "public-key"
                     }]);
+
                     // check session
                     assert.isObject(req.session);
-                    assert.instanceOf(req.session.registerChallenge, ArrayBuffer);
+                    assert.isString(req.session.registerChallenge);
+                    assert.strictEqual(req.session.registerChallenge, "AQID");
                     assert.isNumber(req.session.registerChallengeTime);
                     assert.strictEqual(req.session.username, "bubba");
                 });
@@ -289,6 +292,7 @@ describe("Fido2Component", function() {
                     var msg = res._getData();
                     assert.isString(msg);
                     msg = JSON.parse(msg);
+
                     // check message
                     assert.strictEqual(msg.status, "ok");
                     assert.strictEqual(msg.errorMessage, "");
@@ -297,9 +301,11 @@ describe("Fido2Component", function() {
                     assert.isArray(msg.allowCredentials);
                     assert.strictEqual(msg.allowCredentials.length, 1);
                     assert.strictEqual(msg.timeout, 60000);
+
                     // check session
                     assert.isObject(req.session);
-                    assert.instanceOf(req.session.loginChallenge, ArrayBuffer);
+                    assert.isString(req.session.loginChallenge);
+                    assert.strictEqual(req.session.loginChallenge, "AQID");
                     assert.isNumber(req.session.loginChallengeTime);
                     assert.strictEqual(req.session.username, "bubba");
                 });
