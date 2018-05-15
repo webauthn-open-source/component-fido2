@@ -1,6 +1,6 @@
 {
   "name": "component-fido2",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "The core component of a FIDO2 server",
   "main": "index.js",
   "scripts": {
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "component-class": "^2.0.0",
-    "fido2-lib": "^1.0.4",
+    "fido2-lib": "^1.1.0",
     "node-webcrypto-ossl": "^1.0.36",
     "webauthn-simple-app": "^1.1.0"
   }
