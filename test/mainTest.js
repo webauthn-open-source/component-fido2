@@ -122,10 +122,13 @@ describe("Fido2Component", function() {
                     // assert.strictEqual(msg.rp.id, "example.com");
                     // assert.strictEqual(msg.rp.name, "example.com");
                     assert.isArray(msg.pubKeyCredParams);
-                    assert.strictEqual(msg.pubKeyCredParams.length, 1);
+                    assert.strictEqual(msg.pubKeyCredParams.length, 2);
                     assert.deepEqual(msg.pubKeyCredParams, [{
                         alg: -7,
                         type: "public-key"
+                    }, {
+                        type: "public-key",
+                        alg: -257
                     }]);
 
                     // check session
