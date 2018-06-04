@@ -78,17 +78,7 @@ describe("Fido2Component", function() {
     describe("registerRequest", function() {
         beforeEach(() => {
             // configure fido2-component so that we can stub Fido2Lib
-            f2c.serviceName = "example.com";
             f2c.init();
-            var credCreate = sinon.stub(f2c.fido2lib, "createCredentialChallenge");
-            credCreate.returns(Promise.resolve({
-                challenge: Uint8Array.from([0x1, 0x2, 0x3]).buffer
-            }));
-        });
-
-        afterEach(() => {
-            // restore stubbed methods
-            f2c.fido2lib.createCredentialChallenge.restore();
         });
 
         it("returns options", function() {
@@ -111,14 +101,14 @@ describe("Fido2Component", function() {
                     assert.strictEqual(msg.status, "ok");
                     assert.strictEqual(msg.errorMessage, "");
                     assert.isString(msg.challenge);
-                    assert.strictEqual(msg.challenge, "AQID");
+                    assert.strictEqual(msg.challenge.length, 86);
                     assert.strictEqual(msg.timeout, 60000);
                     assert.isObject(msg.user);
                     assert.strictEqual(msg.user.name, "bubba");
                     assert.strictEqual(msg.user.id, "YnViYmE");
                     assert.strictEqual(msg.user.displayName, "Bubba Smith");
                     assert.isObject(msg.rp);
-                    assert.strictEqual(msg.rp.name, "example.com");
+                    assert.strictEqual(msg.rp.name, "ANONYMOUS SERVICE");
                     // assert.strictEqual(msg.rp.id, "example.com");
                     // assert.strictEqual(msg.rp.name, "example.com");
                     assert.isArray(msg.pubKeyCredParams);
@@ -134,7 +124,7 @@ describe("Fido2Component", function() {
                     // check session
                     assert.isObject(req.session);
                     assert.isString(req.session.registerChallenge);
-                    assert.strictEqual(req.session.registerChallenge, "AQID");
+                    assert.strictEqual(req.session.registerChallenge.length, 88);
                     assert.isNumber(req.session.registerChallengeTime);
                     assert.strictEqual(req.session.username, "bubba");
                 });
@@ -155,18 +145,18 @@ describe("Fido2Component", function() {
             f2c.serviceName = "example.com";
             f2c.dangerousOpenRegistration = true;
             f2c.init();
-            var credCreate = sinon.stub(f2c.fido2lib, "createCredentialChallenge");
-            credCreate.returns(Promise.resolve({
-                challenge: Uint8Array.from([0x1, 0x2, 0x3]).buffer
-            }));
+            // var credCreate = sinon.stub(f2c.fido2lib, "createCredentialChallenge");
+            // credCreate.returns(Promise.resolve({
+            //     challenge: Uint8Array.from([0x1, 0x2, 0x3]).buffer
+            // }));
             // create attestation object
             testObj = cloneObject(h.server.challengeResponseAttestationNoneMsgB64Url);
         });
 
-        afterEach(() => {
-            // restore stubbed methods
-            f2c.fido2lib.createCredentialChallenge.restore();
-        });
+        // afterEach(() => {
+        //     // restore stubbed methods
+        //     f2c.fido2lib.createCredentialChallenge.restore();
+        // });
 
         it("returns a Promise");
 
@@ -188,7 +178,6 @@ describe("Fido2Component", function() {
             return f2c.registerResponse(req, res)
                 .then(() => {
                     assert.strictEqual(res.statusCode, 200);
-                    console.log("res", res._getData());
                     var msg = res._getData();
                     assert.isString(msg);
                     msg = JSON.parse(msg);
@@ -268,17 +257,12 @@ describe("Fido2Component", function() {
             // configure fido2-component so that we can stub Fido2Lib
             f2c.serviceName = "example.com";
             f2c.init();
-            var getCreate = sinon.stub(f2c.fido2lib, "getAssertionChallenge");
-            getCreate.returns(Promise.resolve({
-                challenge: Uint8Array.from([0x1, 0x2, 0x3]).buffer
-            }));
         });
 
         afterEach(() => {
             // restore stubbed methods
             dummyUds.findUsers.restore();
             goodDummyUser.getCredentials.restore();
-            f2c.fido2lib.getAssertionChallenge.restore();
         });
 
         it("returns options", function() {
@@ -301,7 +285,7 @@ describe("Fido2Component", function() {
                     assert.strictEqual(msg.status, "ok");
                     assert.strictEqual(msg.errorMessage, "");
                     assert.isString(msg.challenge);
-                    assert.strictEqual(msg.challenge, "AQID");
+                    assert.strictEqual(msg.challenge.length, 86);
                     assert.isArray(msg.allowCredentials);
                     assert.strictEqual(msg.allowCredentials.length, 1);
                     assert.strictEqual(msg.timeout, 60000);
@@ -309,7 +293,7 @@ describe("Fido2Component", function() {
                     // check session
                     assert.isObject(req.session);
                     assert.isString(req.session.loginChallenge);
-                    assert.strictEqual(req.session.loginChallenge, "AQID");
+                    assert.strictEqual(req.session.loginChallenge.length, 88);
                     assert.isNumber(req.session.loginChallengeTime);
                     assert.strictEqual(req.session.username, "bubba");
                 });
@@ -335,10 +319,10 @@ describe("Fido2Component", function() {
             f2c.serviceName = "example.com";
             f2c.init();
             f2c.origin = "https://localhost:8443";
-            var credCreate = sinon.stub(f2c.fido2lib, "createCredentialChallenge");
-            credCreate.returns(Promise.resolve({
-                challenge: Uint8Array.from([0x1, 0x2, 0x3]).buffer
-            }));
+            // var credCreate = sinon.stub(f2c.fido2lib, "createCredentialChallenge");
+            // credCreate.returns(Promise.resolve({
+            //     challenge: Uint8Array.from([0x1, 0x2, 0x3]).buffer
+            // }));
             // test object
             testObj = cloneObject(h.server.assertionResponseMsgB64Url);
         });
@@ -348,7 +332,7 @@ describe("Fido2Component", function() {
             dummyUds.findUsers.restore();
             goodDummyUser.getCredentials.restore();
             goodDummyCred.get.restore();
-            f2c.fido2lib.createCredentialChallenge.restore();
+            // f2c.fido2lib.createCredentialChallenge.restore();
         });
 
         it("sends a response", function() {
